@@ -129,7 +129,10 @@ class PilarPantalla extends StatelessWidget {
       appBar: AppBar(title: Text(p.titulo)),
       body: ListView(padding: const EdgeInsets.all(12), children: [
         Card(
-          color: p.color.withAlpha(25),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: p.color, width: 1.5),
+          ),
           child: ListTile(
             leading: Icon(p.icono, color: p.color, size: 32),
             title: Text(p.niveles),

@@ -13,9 +13,10 @@ import '../widgets.dart';
 
 /// Botón de la regla de oro: abre la guía de cómo obtener el dato correctamente.
 class GuiaBoton extends ConsumerWidget {
-  const GuiaBoton({super.key, required this.codigo, this.compacto = false});
+  const GuiaBoton({super.key, required this.codigo, this.compacto = false, this.etiqueta});
   final String codigo;
   final bool compacto;
+  final String? etiqueta;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +36,7 @@ class GuiaBoton extends ConsumerWidget {
     return OutlinedButton.icon(
       onPressed: abrir,
       icon: const Icon(Icons.menu_book),
-      label: const Text('Guía: cómo obtener este dato correctamente'),
+      label: Text(etiqueta ?? 'Guía: cómo obtener este dato correctamente'),
     );
   }
 }

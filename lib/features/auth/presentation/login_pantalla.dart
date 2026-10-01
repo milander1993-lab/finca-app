@@ -21,8 +21,25 @@ class _LoginPantallaState extends ConsumerState<LoginPantalla> {
     final auth = ref.read(supabaseProvider).auth;
     try {
       if (registrar) {
-        await auth.signUp(email: _correo.text.trim(), password: _clave.text);
-        if (mounted) mostrarMensaje(context, 'Cuenta creada. Si se pide, confirme desde su correo.');
+        final r = await auth.signUp(
+          email: _correo.text.trim(),
+          password: _clave.text,
+          emailRedirectTo: 'https://milander1993-lab.github.io/finca-app/',
+        );
+        if (mounted && r.session == null) {
+          await showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Cuenta creada'),
+              content: Text('Le enviamos un correo a ${_correo.text.trim()}.\n\n'
+                  '1. Ábralo (revise también Spam o Promociones).\n'
+                  '2. Toque "Confirm your mail".\n'
+                  '3. Vuelva aquí y toque "Entrar" con el mismo correo y contraseña.\n\n'
+                  'No toque "Crear cuenta" otra vez: la cuenta ya existe.'),
+              actions: [FilledButton(onPressed: () => Navigator.pop(ctx), child: const Text('Entendido'))],
+            ),
+          );
+        }
       } else {
         await auth.signInWithPassword(email: _correo.text.trim(), password: _clave.text);
       }

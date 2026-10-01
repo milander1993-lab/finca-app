@@ -80,9 +80,9 @@ class AnimalDetallePantalla extends ConsumerWidget {
           ),
           const Divider(),
           // Expediente integral (§46): la misma información, conectada
-          const GuiaBoton(codigo: 'pesaje_bovino'),
+          const GuiaBoton(codigo: 'pesaje_bovino', etiqueta: 'Guía: cómo pesar correctamente'),
           const SizedBox(height: 4),
-          const GuiaBoton(codigo: 'fotografia_animal'),
+          const GuiaBoton(codigo: 'fotografia_animal', etiqueta: 'Guía: fotografías estandarizadas del animal'),
           PanelRelacion(relacion: const RelacionDef('eventos_sanitarios', 'animal_id', 'Sanidad'), padreId: animalId),
           PanelRelacion(relacion: const RelacionDef('eventos_reproductivos', 'animal_id', 'Reproducción'), padreId: animalId),
           PanelRelacion(relacion: const RelacionDef('produccion_leche', 'animal_id', 'Producción de leche'), padreId: animalId),

@@ -112,7 +112,10 @@ class _Tablero extends ConsumerWidget {
             _Proposito(finca: finca),
             if (finca['datos_declarados_en'] == null)
               Card(
-                color: ColoresArea.agroecologia.withAlpha(25),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: const BorderSide(color: ColoresArea.agroecologia, width: 1.5),
+                ),
                 child: ListTile(
                   leading: const Icon(Icons.download_done, color: ColoresArea.agroecologia),
                   title: const Text('Cargar los datos que ya declaró en la arquitectura'),
@@ -280,7 +283,10 @@ class _Tablero extends ConsumerWidget {
                   children: [
                     for (final p in pilares)
                       Card(
-                        color: p.color.withAlpha(20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: p.color.withAlpha(140), width: 1.2),
+                        ),
                         child: InkWell(
                           onTap: () => context.push('/p/${p.id}'),
                           child: Padding(
