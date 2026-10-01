@@ -127,7 +127,7 @@ class ExpedienteEntidadPantalla extends ConsumerWidget {
         error: (e, _) => Vacio(mensajeError(e)),
         data: (fila) {
           if (fila == null) return const Vacio('Registro no encontrado o anulado.');
-          final estado = def.campoEstado == null ? null : '${fila[def.campoEstado]}';
+          final estado = def.campoEstado == null || fila[def.campoEstado] == null ? null : '${fila[def.campoEstado]}';
           final siguientes = estado == null ? const <String>[] : (def.transiciones[estado] ?? const <String>[]);
           final faltan = camposFaltantes(def, fila);
           return RefreshIndicator(
