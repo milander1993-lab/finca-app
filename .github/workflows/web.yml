@@ -1,0 +1,37 @@
+# Compila la app (PWA web) y la publica gratis en GitHub Pages en cada push a main.
+# También deja el APK de Android como artefacto descargable.
+name: Compilar y publicar
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency: { group: pages, cancel-in-progress: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+      # Genera carpetas de plataforma (web/, android/) sin tocar lib/
+      - run: flutter create . --platforms=web,android --project-name finca_app --org co.hatoclaros
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos --no-fatal-warnings
+      - run: flutter test
+      - run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: build/web }
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with: { name: finca-android-apk, path: build/app/outputs/flutter-apk/app-release.apk }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages, url: "${{ steps.d.outputs.page_url }}" }
+    steps:
+      - id: d
+        uses: actions/deploy-pages@v4
