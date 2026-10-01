@@ -4,7 +4,10 @@ import 'package:intl/intl.dart';
 
 import '../../../core/finca_actual.dart';
 import '../../../core/supabase.dart';
+import '../../../core/entidades/definicion.dart';
+import '../../../core/transversal/paneles.dart';
 import '../../../core/widgets.dart';
+import '../../ia/ia.dart';
 import '../../lotes/data/lotes_repositorio.dart';
 import '../data/animales_repositorio.dart';
 
@@ -22,6 +25,11 @@ class AnimalDetallePantalla extends ConsumerWidget {
     final historial = ref.watch(historialLoteProvider(animalId));
     return Scaffold(
       appBar: AppBar(title: Text(animal.valueOrNull?.numeroInterno ?? 'Animal')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => AsistenteIA.abrir(context, tabla: 'animales', id: animalId, titulo: animal.valueOrNull?.numeroInterno),
+        icon: const Icon(Icons.auto_awesome),
+        label: const Text('Asistente'),
+      ),
       body: animal.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Vacio(mensajeError(e)),
@@ -70,6 +78,19 @@ class AnimalDetallePantalla extends ConsumerWidget {
                       ),
                   ],
           ),
+          const Divider(),
+          // Expediente integral (§46): la misma información, conectada
+          const GuiaBoton(codigo: 'pesaje_bovino'),
+          const SizedBox(height: 4),
+          const GuiaBoton(codigo: 'fotografia_animal'),
+          PanelRelacion(relacion: const RelacionDef('eventos_sanitarios', 'animal_id', 'Sanidad'), padreId: animalId),
+          PanelRelacion(relacion: const RelacionDef('eventos_reproductivos', 'animal_id', 'Reproducción'), padreId: animalId),
+          PanelRelacion(relacion: const RelacionDef('produccion_leche', 'animal_id', 'Producción de leche'), padreId: animalId),
+          PanelRelacion(relacion: const RelacionDef('actividades', 'animal_id', 'Actividades y tareas'), padreId: animalId),
+          PanelVinculados(tablaDestino: 'observaciones', objetoTipo: 'animales', objetoId: animalId),
+          PanelVinculados(tablaDestino: 'evidencias', objetoTipo: 'animales', objetoId: animalId, titulo: 'Fotos y documentos (Drive)'),
+          PanelAuditoria(tabla: 'animales', id: animalId),
+          const SizedBox(height: 80),
         ]),
       ),
     );

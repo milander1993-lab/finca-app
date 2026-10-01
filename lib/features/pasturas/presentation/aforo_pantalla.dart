@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/finca_actual.dart';
 import '../../../core/supabase.dart';
+import '../../../core/transversal/paneles.dart';
 import '../../../core/widgets.dart';
 import '../data/pasturas_repositorio.dart';
 import '../domain/pasturas.dart';
@@ -25,7 +26,7 @@ class AforoPantalla extends ConsumerWidget {
     final muestras = ref.watch(muestrasProvider(aforoId));
     final lista = muestras.valueOrNull ?? const <MuestraAforo>[];
     return Scaffold(
-      appBar: AppBar(title: const Text('Aforo')),
+      appBar: AppBar(title: const Text('Aforo'), actions: const [GuiaBoton(codigo: 'aforo_materia_seca', compacto: true)]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _nuevoPunto(context, ref, lista.isEmpty ? 1 : lista.map((m) => m.punto).reduce((a, b) => a > b ? a : b) + 1),
         icon: const Icon(Icons.add),

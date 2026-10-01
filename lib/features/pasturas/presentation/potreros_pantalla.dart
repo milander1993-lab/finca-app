@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../app/tema.dart';
 import '../../../core/finca_actual.dart';
 import '../../../core/supabase.dart';
+import '../../../core/transversal/paneles.dart';
 import '../../../core/widgets.dart';
 import '../../lotes/data/lotes_repositorio.dart';
 import '../data/pasturas_repositorio.dart';
@@ -26,7 +27,9 @@ class PotrerosPantalla extends ConsumerWidget {
     final alertas = ocupaciones.where((o) => o.abierta && o.excede).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Potreros y aforo')),
+      appBar: AppBar(title: const Text('Potreros y aforo'), actions: const [
+        GuiaBoton(codigo: 'ocupacion_pastoreo', compacto: true),
+      ]),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _pedirNombre(context, 'Nuevo potrero', (n) async {
           final f = ref.read(fincaActualProvider)!;
