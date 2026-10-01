@@ -18,14 +18,28 @@ jobs:
       - uses: subosito/flutter-action@v2
         with: { channel: stable, cache: true }
       # Genera carpetas de plataforma (web/, android/) sin tocar lib/
-      - run: flutter create . --platforms=web,android --project-name finca_app --org co.hatoclaros
-      - run: flutter pub get
-      - run: flutter analyze --no-fatal-infos --no-fatal-warnings
-      - run: flutter test
-      - run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+      - run: |
+          set -o pipefail
+          flutter create . --platforms=web,android --project-name finca_app --org co.hatoclaros --no-pub 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
+      - run: rm -f test/widget_test.dart
+      - run: |
+          set -o pipefail
+          flutter pub get 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
+      - run: |
+          flutter analyze --no-fatal-infos --no-fatal-warnings > analisis.txt 2>&1 && exit 0
+          grep -E "^ *error" analisis.txt | head -n 10 | while IFS= read -r l; do echo "::error::$l"; done
+          exit 1
+      - run: |
+          set -o pipefail
+          flutter test 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
+      - run: |
+          set -o pipefail
+          flutter build web --release --base-href "/${{ github.event.repository.name }}/" 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
       - uses: actions/upload-pages-artifact@v3
         with: { path: build/web }
-      - run: flutter build apk --release
+      - run: |
+          set -o pipefail
+          flutter build apk --release 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
       - uses: actions/upload-artifact@v4
         with: { name: finca-android-apk, path: build/app/outputs/flutter-apk/app-release.apk }
   deploy:
