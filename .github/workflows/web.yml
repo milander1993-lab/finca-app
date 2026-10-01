@@ -35,13 +35,15 @@ jobs:
       - run: |
           set -o pipefail
           flutter build web --release --base-href "/${{ github.event.repository.name }}/" 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: build/web }
       - run: |
           set -o pipefail
           flutter build apk --release 2>&1 | tee salida.txt || { tail -n 10 salida.txt | while IFS= read -r l; do echo "::error::$l"; done; exit 1; }
       - uses: actions/upload-artifact@v4
         with: { name: finca-android-apk, path: build/app/outputs/flutter-apk/app-release.apk }
+      # El instalador Android queda descargable desde la misma página: /finca-app/finca.apk
+      - run: cp build/app/outputs/flutter-apk/app-release.apk build/web/finca.apk
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: build/web }
   deploy:
     needs: build
     runs-on: ubuntu-latest
