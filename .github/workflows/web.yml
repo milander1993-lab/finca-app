@@ -7,8 +7,6 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  pages: write
-  id-token: write
 concurrency: { group: pages, cancel-in-progress: true }
 jobs:
   build:
@@ -49,13 +47,3 @@ jobs:
           publish_dir: build/web
           publish_branch: gh-pages
           force_orphan: true
-      - uses: actions/upload-pages-artifact@v3
-        with: { path: build/web }
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: { name: github-pages, url: "${{ steps.d.outputs.page_url }}" }
-    steps:
-      - id: d
-        continue-on-error: true
-        uses: actions/deploy-pages@v4
